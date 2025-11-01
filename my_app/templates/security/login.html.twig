@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'partials/_breadcrumb.html.twig' with {
+        items: [
+            { label: 'Home', url: path('app_home') },
+            { label: 'Login' }
+        ]
+    } %}
+{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h4 mb-4 text-center">Sign in</h1>
+
+                {% if error %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error.messageKey|trans(error.messageData, 'security') }}
+                    </div>
+                {% endif %}
+
+                <form method="post" action="{{ path('app_login') }}">
+                    <div class="mb-3">
+                        <label for="inputEmail" class="form-label">Email address</label>
+                        <input
+                            type="email"
+                            name="email"
+                            id="inputEmail"
+                            class="form-control"
+                            value="{{ last_username }}"
+                            autocomplete="email"
+                            required
+                            autofocus
+                        >
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="inputPassword" class="form-label">Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            id="inputPassword"
+                            class="form-control"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                    <div class="d-grid">
+                        <button class="btn btn-primary" type="submit">
+                            Sign in
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

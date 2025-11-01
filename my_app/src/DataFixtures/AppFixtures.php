@@ -6,9 +6,15 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\Product;
 use App\Entity\Category;
+use App\Entity\User;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+    public function __construct(private UserPasswordHasherInterface $passwordHasher)
+    {
+    }
+
     public function load(ObjectManager $manager): void
     {
         $faker = \Faker\Factory::create();
@@ -49,6 +55,46 @@ class AppFixtures extends Fixture
             // assign a random category from the ones created above
             $product->setCategory($faker->randomElement($categories));
             $manager->persist($product);
+        }
+
+        // --- Türkçe açıklama: örnek kullanıcılar ekleniyor (admin, employee, customer) ---
+        $usersData = [
+            [
+                'email' => 'admin@shop.com',
+                'firstName' => 'System',
+                'lastName' => 'Admin',
+                'type' => 'admin',
+                'roles' => ['ROLE_ADMIN'],
+                'password' => 'admin123',
+            ],
+            [
+                'email' => 'employee@shop.com',
+                'firstName' => 'John',
+                'lastName' => 'Doe',
+                'type' => 'employee',
+                'roles' => ['ROLE_EMPLOYEE'],
+                'password' => 'employee123',
+            ],
+            [
+                'email' => 'customer@shop.com',
+                'firstName' => 'Jane',
+                'lastName' => 'Smith',
+                'type' => 'customer',
+                'roles' => ['ROLE_CUSTOMER'],
+                'password' => 'customer123',
+            ],
+        ];
+
+        foreach ($usersData as $userData) {
+            $user = new User();
+            $user->setEmail($userData['email']);
+            $user->setFirstName($userData['firstName']);
+            $user->setLastName($userData['lastName']);
+            $user->setType($userData['type']);
+            $user->setRoles($userData['roles']);
+            $hashedPassword = $this->passwordHasher->hashPassword($user, $userData['password']);
+            $user->setPassword($hashedPassword);
+            $manager->persist($user);
         }
 
         $manager->flush();
