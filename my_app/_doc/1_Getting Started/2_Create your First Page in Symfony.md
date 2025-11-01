@@ -116,8 +116,6 @@ Symfony’de bir sayfa oluşturmak **iki temel adıma dayanır:**
 >
 > Ancak isterseniz YAML, XML veya PHP dosyaları kullanarak da route tanımlayabilirsiniz.
 
-
-
 ## `bin/console` Komutu
 
 Symfony projeniz, içinde güçlü bir hata ayıklama (debugging) aracıyla birlikte gelir: **`bin/console`** komutu.
@@ -338,7 +336,3 @@ Daha sonra şu konulara geçebilirsiniz:
 * [Symfony and HTTP Fundamentals](https://symfony.com/doc/current/introduction/http_fundamentals.html)
 
 ---
-
-📜 **Lisans:**
-
-Bu içerik ve kod örnekleri **Creative Commons BY-SA 3.0** lisansı altında paylaşılmıştır.
