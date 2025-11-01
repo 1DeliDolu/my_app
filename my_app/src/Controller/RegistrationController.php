@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Service\MailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +20,8 @@ final class RegistrationController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $entityManager,
-        Security $security
+        Security $security,
+        MailService $mailService
     ): Response {
         if ($this->getUser()) {
             return $this->redirectToRoute('app_home');
@@ -41,6 +43,8 @@ final class RegistrationController extends AbstractController
 
             $entityManager->persist($user);
             $entityManager->flush();
+
+            $mailService->sendWelcomeEmail($user->getEmail(), $user->getFirstName());
 
             $response = $security->login($user);
 

@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User Management{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'partials/_breadcrumb.html.twig' with {
+        items: [
+            { label: 'Home', url: path('app_home') },
+            { label: 'Admin', url: path('app_admin_users') },
+            { label: 'Users' }
+        ]
+    } %}
+{% endblock %}
+
+{% block body %}
+<h2 class="mb-4">User Management</h2>
+
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-{{ label == 'success' ? 'success' : (label == 'danger' ? 'danger' : 'info') }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Email</th>
+                <th scope="col">Name</th>
+                <th scope="col">Role</th>
+                <th scope="col" class="text-end">Change Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.firstName }} {{ user.lastName }}</td>
+                    <td>{{ user.roles[0] ?? 'ROLE_USER' }}</td>
+                    <td class="text-end">
+                        <form method="post" action="{{ path('app_admin_user_role', { id: user.id }) }}" class="d-inline-flex align-items-center gap-2">
+                            <input type="hidden" name="_token" value="{{ csrf_token('change_role_' ~ user.id) }}">
+                            <select name="role" class="form-select form-select-sm">
+                                <option value="ROLE_ADMIN" {{ user.roles[0] == 'ROLE_ADMIN' ? 'selected' : '' }}>Admin</option>
+                                <option value="ROLE_EMPLOYEE" {{ user.roles[0] == 'ROLE_EMPLOYEE' ? 'selected' : '' }}>Employee</option>
+                                <option value="ROLE_CUSTOMER" {{ user.roles[0] == 'ROLE_CUSTOMER' ? 'selected' : '' }}>Customer</option>
+                            </select>
+                            <button class="btn btn-sm btn-primary">Save</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
