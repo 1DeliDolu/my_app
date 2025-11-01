@@ -19,7 +19,97 @@
       </nav>
 
       <main class="container">
+          {% block breadcrumb %}{% endblock %}
           {% block body %}{% endblock %}
       </main>
+
+      {% block javascripts %}
+      <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          const categoryList = document.getElementById('category-list');
+          const productList = document.getElementById('product-list');
+
+          if (!categoryList || !productList) {
+              return;
+          }
+
+          const categoryLinks = categoryList.querySelectorAll('.category-link');
+          const allProductsLink = document.getElementById('all-products-link');
+          const listItems = categoryList.querySelectorAll('.list-group-item');
+          const categoryTitle = document.getElementById('category-title');
+          const categoryDescription = document.getElementById('category-description');
+
+          const setActive = (activeElement) => {
+              listItems.forEach((item) => item.classList.remove('active'));
+              if (activeElement) {
+                  activeElement.classList.add('active');
+              }
+          };
+
+          const updateCategoryDetails = (sourceElement) => {
+              if (!sourceElement) {
+                  return;
+              }
+
+              if (categoryTitle && sourceElement.dataset.categoryName) {
+                  categoryTitle.textContent = sourceElement.dataset.categoryName;
+              }
+
+              if (categoryDescription) {
+                  const description = sourceElement.dataset.categoryDescription || '';
+                  categoryDescription.textContent = description;
+
+                  if (description.trim().length === 0) {
+                      categoryDescription.classList.add('d-none');
+                  } else {
+                      categoryDescription.classList.remove('d-none');
+                  }
+              }
+          };
+
+          const loadProducts = (url, activeElement) => {
+              if (!url) {
+                  return;
+              }
+
+              fetch(url, {
+                  headers: {
+                      'X-Requested-With': 'XMLHttpRequest'
+                  }
+              })
+                  .then((response) => {
+                      if (!response.ok) {
+                          throw new Error(`Failed to load products: ${response.status}`);
+                      }
+                      return response.text();
+                  })
+                  .then((html) => {
+                      productList.innerHTML = html;
+                      setActive(activeElement);
+                      updateCategoryDetails(activeElement);
+                  })
+                  .catch((error) => {
+                      console.error('Error loading products:', error);
+                  });
+          };
+
+          categoryLinks.forEach((link) => {
+              link.addEventListener('click', (event) => {
+                  event.preventDefault();
+                  const url = link.dataset.productsUrl || '';
+                  loadProducts(url, link);
+              });
+          });
+
+          if (allProductsLink) {
+              allProductsLink.addEventListener('click', (event) => {
+                  event.preventDefault();
+                  const url = allProductsLink.dataset.productsUrl || '';
+                  loadProducts(url, allProductsLink);
+              });
+          }
+      });
+      </script>
+      {% endblock %}
   </body>
 </html>

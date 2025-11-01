@@ -22,4 +22,14 @@ final class HomeController extends AbstractController
             'categories' => $categories,
         ]);
     }
+
+    #[Route('/products/all', name: 'app_all_products')]
+    public function allProducts(ProductRepository $productRepository): Response
+    {
+        $products = $productRepository->findAll();
+
+        return $this->render('category/_products.html.twig', [
+            'products' => $products,
+        ]);
+    }
 }

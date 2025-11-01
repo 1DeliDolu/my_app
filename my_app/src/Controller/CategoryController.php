@@ -28,4 +28,14 @@ final class CategoryController extends AbstractController
             'categories' => $categories,
         ]);
     }
+
+    #[Route('/{slug}/products', name: 'app_category_products')]
+    public function products(#[MapEntity(mapping: ['slug' => 'slug'])] Category $category, ProductRepository $productRepository): Response
+    {
+        $products = $productRepository->findBy(['category' => $category]);
+
+        return $this->render('category/_products.html.twig', [
+            'products' => $products,
+        ]);
+    }
 }

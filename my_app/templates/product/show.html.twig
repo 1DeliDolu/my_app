@@ -1,9 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Product{% endblock %}
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'partials/_breadcrumb.html.twig' with {
+        items: [
+            { label: 'Home', url: path('app_home') },
+            { label: product.category ? product.category.name : 'Category', url: product.category ? path('app_category_show', { slug: product.category.slug }) : null },
+            { label: product.name }
+        ]
+    } %}
+{% endblock %}
 
 {% block body %}
-    <h1>Product</h1>
+    <h1>{{ product.name }}</h1>
 
     <table class="table">
         <tbody>
