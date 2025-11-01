@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'partials/_breadcrumb.html.twig' with {
+        items: [
+            { label: 'Home', url: path('app_home') },
+            { label: 'Register' }
+        ]
+    } %}
+{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-4 text-center">Create an Account</h2>
+
+        {{ form_start(registrationForm) }}
+            <div class="mb-3">
+                {{ form_label(registrationForm.firstName) }}
+                {{ form_widget(registrationForm.firstName, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(registrationForm.firstName) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(registrationForm.lastName) }}
+                {{ form_widget(registrationForm.lastName, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(registrationForm.lastName) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(registrationForm.email) }}
+                {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(registrationForm.email) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_row(registrationForm.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
+                {{ form_row(registrationForm.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-3">Register</button>
+        {{ form_end(registrationForm) }}
+    </div>
+</div>
+{% endblock %}

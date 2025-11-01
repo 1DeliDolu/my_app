@@ -92,6 +92,7 @@ class AppFixtures extends Fixture
             $user->setLastName($userData['lastName']);
             $user->setType($userData['type']);
             $user->setRoles($userData['roles']);
+            $user->setIsVerified(true);
             $hashedPassword = $this->passwordHasher->hashPassword($user, $userData['password']);
             $user->setPassword($hashedPassword);
             $manager->persist($user);
