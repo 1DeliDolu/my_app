@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>PehliONE Dashboard Report</title>
+    <style>
+        body { font-family: "DejaVu Sans", Arial, sans-serif; margin: 32px; color: #2c3e50; font-size: 12px; }
+        header { text-align: center; margin-bottom: 24px; }
+        header h1 { margin: 0; font-size: 24px; letter-spacing: 1px; color: #0d6efd; }
+        header p { margin: 4px 0 0; font-size: 11px; color: #6c757d; }
+        .summary { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
+        .summary-card { flex: 1; background: #f8f9fa; border-radius: 6px; padding: 14px; border: 1px solid #e1e5eb; text-align: center; }
+        .summary-card h3 { margin: 0 0 6px; font-size: 18px; color: #212529; }
+        .summary-card span { font-size: 11px; text-transform: uppercase; color: #6c757d; letter-spacing: .8px; }
+        h2 { font-size: 16px; margin: 28px 0 12px; color: #0d6efd; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #0d6efd; padding-bottom: 6px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+        th, td { border: 1px solid #dee2e6; padding: 8px 10px; font-size: 11px; }
+        th { background-color: #eef2f8; color: #1f2d3d; text-align: left; }
+        td.amount, th.amount { text-align: right; }
+        .empty { text-align: center; color: #adb5bd; padding: 18px 0; }
+        footer { margin-top: 30px; text-align: center; font-size: 10px; color: #6c757d; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>PehliONE Finansal Rapor</h1>
+    <p>Oluşturulma Tarihi: {{ generatedAt|date('d.m.Y H:i') }}</p>
+</header>
+
+<section class="summary">
+    <div class="summary-card">
+        <h3>{{ totalUsers }}</h3>
+        <span>Kullanıcılar</span>
+    </div>
+    <div class="summary-card">
+        <h3>{{ totalProducts }}</h3>
+        <span>Ürünler</span>
+    </div>
+    <div class="summary-card">
+        <h3>{{ totalOrders }}</h3>
+        <span>Siparişler</span>
+    </div>
+    <div class="summary-card">
+        <h3>{{ totalRevenue|number_format(2, ',', '.') }} ₺</h3>
+        <span>Toplam Ciro</span>
+    </div>
+</section>
+
+<section>
+    <h2>Öne Çıkan Kategoriler</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Kategori</th>
+            <th class="amount">Ciro (₺)</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for category in topCategories %}
+            <tr>
+                <td>{{ category.name }}</td>
+                <td class="amount">{{ category.revenue|number_format(2, ',', '.') }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2" class="empty">Veri bulunamadı.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Son Siparişler</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Müşteri</th>
+            <th>Durum</th>
+            <th>Tarih</th>
+            <th class="amount">Toplam (₺)</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in latestOrders %}
+            <tr>
+                <td>#{{ order.id }}</td>
+                <td>{{ order.user ? order.user.firstName ~ ' ' ~ order.user.lastName : 'Anonim' }}</td>
+                <td>{{ order.status }}</td>
+                <td>{{ order.createdAt ? order.createdAt|date('d.m.Y H:i') : '-' }}</td>
+                <td class="amount">{{ order.total|number_format(2, ',', '.') }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5" class="empty">Sipariş bulunamadı.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<footer>
+    PehliONE Yönetim Paneli tarafından otomatik oluşturulmuştur.
+</footer>
+</body>
+</html>

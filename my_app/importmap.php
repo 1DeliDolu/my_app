@@ -25,4 +25,10 @@ return [
     '@hotwired/turbo' => [
         'version' => '7.3.0',
     ],
+    'chart.js/auto' => [
+        'url' => 'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.esm.js',
+    ],
+    'chart.js/helpers' => [
+        'url' => 'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/helpers.esm.js',
+    ],
 ];

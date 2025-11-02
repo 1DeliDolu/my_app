@@ -1,0 +1,58 @@
+{% extends 'dashboard/base_dashboard.html.twig' %}
+{% set title = 'Admin Dashboard' %}
+{% set subtitle = 'Full overview of users, orders, and revenue.' %}
+
+{% block dashboard_content %}
+  <div class="row g-3 mb-4">
+    {% include '_widgets/_kpi_card.html.twig' with {
+      label: 'Users',
+      value: stats.users,
+      numeric_value: stats.users,
+      icon: '👤'
+    } %}
+    {% include '_widgets/_kpi_card.html.twig' with {
+      label: 'Products',
+      value: stats.products,
+      numeric_value: stats.products,
+      icon: '📦'
+    } %}
+    {% include '_widgets/_kpi_card.html.twig' with {
+      label: 'Orders',
+      value: stats.orders,
+      numeric_value: stats.orders,
+      icon: '🧾'
+    } %}
+    {% include '_widgets/_kpi_card.html.twig' with {
+      label: 'Revenue',
+      value: stats.revenue,
+      numeric_value: stats.revenue,
+      decimals: 2,
+      suffix: ' ₺',
+      icon: '💰'
+    } %}
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-lg-8">
+      {% include '_widgets/_sales_chart.html.twig' with {
+        labels: salesLabels,
+        data: salesData,
+        title: 'Sales',
+        url: path('app_admin_sales_data')
+      } %}
+    </div>
+    <div class="col-lg-4">
+      {% include '_widgets/_table_products.html.twig' with {
+        products: topProducts,
+        title: 'Top Products',
+        showQuantity: true
+      } %}
+    </div>
+  </div>
+
+  {% include '_widgets/_table_orders.html.twig' with {
+    orders: recentOrders,
+    title: 'Recent Orders',
+    link: path('app_order_index')
+  } %}
+{% endblock %}

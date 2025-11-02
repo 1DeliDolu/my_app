@@ -1,0 +1,18 @@
+{% set ranges = ranges|default([7, 30, 90]) %}
+<div class="card p-3 shadow-sm mb-4 h-100"
+     data-controller="chart"
+     data-chart-labels-value="{{ labels|json_encode|e('html_attr') }}"
+     data-chart-data-value="{{ data|json_encode|e('html_attr') }}"
+     {% if url is defined %}data-chart-url-value="{{ url|e('html_attr') }}"{% endif %}>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h6 class="mb-0">{{ title|default('Sales (Last 30 Days)') }}</h6>
+    {% if url is defined %}
+      <div class="btn-group btn-group-sm" role="group" aria-label="Sales range selector">
+        {% for range in ranges %}
+          <button type="button" class="btn btn-outline-secondary" data-range="{{ range }}">{{ range }}d</button>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+  <canvas height="100"></canvas>
+</div>

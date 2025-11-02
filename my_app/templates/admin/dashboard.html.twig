@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+  {% embed 'partials/_page_layout.html.twig' with {
+    title: 'Admin Dashboard',
+    subtitle: 'Users, orders, catalog & sales insights at a glance.',
+    breadcrumbItems: [
+      {'label': 'Admin', 'url': path('app_admin_dashboard')}
+    ]
+  } %}
+    {% block content %}
+      <div class="d-flex justify-content-end align-items-center mb-3">
+        <a href="{{ path('app_admin_report_pdf') }}" class="btn btn-outline-danger">
+          🧾 Download PDF Report
+        </a>
+      </div>
+      <div class="row g-3 mb-4">
+        {% include '_widgets/_kpi_card.html.twig' with {
+          label: 'Users',
+          value: kpis.users,
+          numeric_value: kpis.users,
+          icon: '👤',
+          col_class: 'col-sm-6 col-lg-3'
+        } %}
+        {% include '_widgets/_kpi_card.html.twig' with {
+          label: 'Products',
+          value: kpis.products,
+          numeric_value: kpis.products,
+          icon: '📦',
+          col_class: 'col-sm-6 col-lg-3'
+        } %}
+        {% include '_widgets/_kpi_card.html.twig' with {
+          label: 'Orders',
+          value: kpis.orders,
+          numeric_value: kpis.orders,
+          icon: '🧾',
+          col_class: 'col-sm-6 col-lg-3'
+        } %}
+        {% include '_widgets/_kpi_card.html.twig' with {
+          label: 'Revenue',
+          value: kpis.revenue,
+          numeric_value: kpis.revenue,
+          decimals: 2,
+          suffix: ' ₺',
+          icon: '💰',
+          col_class: 'col-sm-6 col-lg-3'
+        } %}
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-lg-8">
+      {% include '_widgets/_sales_chart.html.twig' with {
+        labels: salesLabels,
+        data: salesData,
+        title: 'Sales',
+        url: path('app_admin_sales_data')
+      } %}
+        </div>
+        <div class="col-lg-4">
+          {% include '_widgets/_table_products.html.twig' with {
+            products: topProducts,
+            title: 'Top Products (by revenue)',
+            showQuantity: true
+          } %}
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-lg-8">
+          {% include '_widgets/_table_orders.html.twig' with {
+            orders: latestOrders,
+            title: 'Latest Orders',
+            link: path('app_order_index')
+          } %}
+        </div>
+        <div class="col-lg-4">
+          <div class="card p-3 shadow-sm h-100">
+            <h6 class="mb-2">Quick Actions</h6>
+            <div class="d-grid gap-2">
+              <a href="{{ path('app_product_index') }}" class="btn btn-outline-dark">Manage Products</a>
+              <a href="{{ path('app_admin_users') }}" class="btn btn-outline-dark">Manage Users</a>
+              <a href="{{ path('app_address_index') }}" class="btn btn-outline-dark">Manage Addresses</a>
+              <a href="{{ path('app_order_index') }}" class="btn btn-outline-dark">Manage Orders</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endblock %}
+  {% endembed %}
+{% endblock %}

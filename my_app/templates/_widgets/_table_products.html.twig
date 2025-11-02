@@ -1,0 +1,31 @@
+<div class="card p-3 shadow-sm mb-4 h-100">
+  <h6 class="mb-3">{{ title|default('Top Products') }}</h6>
+  <div class="table-responsive">
+    <table class="table table-sm align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th class="text-end">Revenue</th>
+          {% if showQuantity|default(false) %}
+            <th class="text-end">Qty</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+          <tr>
+            <td>{{ product.name }}</td>
+            <td class="text-end">{{ product.revenue|number_format(2) }} ₺</td>
+            {% if showQuantity|default(false) %}
+              <td class="text-end">{{ product.qty }}</td>
+            {% endif %}
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="{{ showQuantity|default(false) ? 3 : 2 }}" class="text-center text-muted py-4">No data</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

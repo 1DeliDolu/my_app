@@ -1,0 +1,11 @@
+{% extends 'dashboard/base_dashboard.html.twig' %}
+{% set title = 'My Dashboard' %}
+{% set subtitle = 'Your recent orders and account shortcuts.' %}
+
+{% block dashboard_content %}
+  {% include '_widgets/_table_orders.html.twig' with {
+    orders: orders,
+    title: 'My Recent Orders'
+  } %}
+  <a href="{{ path('app_address_index') }}" class="btn btn-outline-primary mt-3">Manage Addresses</a>
+{% endblock %}
