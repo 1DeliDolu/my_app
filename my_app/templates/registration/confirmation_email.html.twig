@@ -1,11 +1,13 @@
-<h1>Hi! Please confirm your email!</h1>
+<h2>Welcome to MyShop, {{ user.firstName }}!</h2>
 
-<p>
-    Please confirm your email address by clicking the following link: <br><br>
-    <a href="{{ signedUrl|raw }}">Confirm my Email</a>.
-    This link will expire in {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
+<p>Please confirm your email by clicking the button below:</p>
+
+<p style="margin: 20px 0;">
+    <a href="{{ signedUrl|raw }}" style="background:#0d6efd;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;">
+        Confirm My Email
+    </a>
 </p>
 
-<p>
-    Cheers!
-</p>
+<p>This link will expire in {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.</p>
+
+<p>Thank you for joining us! 🛍️</p>

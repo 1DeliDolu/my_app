@@ -18,6 +18,18 @@
             <div class="card-body">
                 <h1 class="h4 mb-4 text-center">Sign in</h1>
 
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+
+                {% for message in app.flashes('verify_email_error') %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+
                 {% if error %}
                     <div class="alert alert-danger" role="alert">
                         {{ error.messageKey|trans(error.messageData, 'security') }}
