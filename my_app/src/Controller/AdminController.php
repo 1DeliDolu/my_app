@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\Order;
 use App\Entity\OrderItem;
 use App\Entity\Product;
@@ -55,6 +56,63 @@ final class AdminController extends AbstractController
 
         $latestOrders = $em->getRepository(Order::class)->findBy([], ['createdAt' => 'DESC'], 10);
 
+        $categoryRows = $em->createQuery(
+            'SELECT c.id AS id, c.name AS name
+             FROM '.Category::class.' c
+             ORDER BY c.name ASC'
+        )->getArrayResult();
+
+        $productRows = $em->createQuery(
+            'SELECT p.id AS id, p.name AS name, c.id AS category_id
+             FROM '.Product::class.' p
+             LEFT JOIN p.category c
+             ORDER BY c.name ASC, p.name ASC'
+        )->getArrayResult();
+
+        $categoriesForFilter = [];
+        foreach ($categoryRows as $row) {
+            $categoryId = (string) $row['id'];
+            $categoriesForFilter[$categoryId] = [
+                'id' => $categoryId,
+                'name' => $row['name'],
+                'products' => [],
+            ];
+        }
+
+        $uncategorizedProducts = [];
+        foreach ($productRows as $row) {
+            $productData = [
+                'id' => (string) $row['id'],
+                'name' => $row['name'],
+            ];
+
+            if (null === $row['category_id']) {
+                $uncategorizedProducts[] = $productData;
+                continue;
+            }
+
+            $categoryKey = (string) $row['category_id'];
+            if (!isset($categoriesForFilter[$categoryKey])) {
+                $categoriesForFilter[$categoryKey] = [
+                    'id' => $categoryKey,
+                    'name' => 'Category #'.$categoryKey,
+                    'products' => [],
+                ];
+            }
+
+            $categoriesForFilter[$categoryKey]['products'][] = $productData;
+        }
+
+        $filterCategories = array_values($categoriesForFilter);
+
+        if ($uncategorizedProducts !== []) {
+            $filterCategories[] = [
+                'id' => 'uncategorized',
+                'name' => 'Uncategorized',
+                'products' => $uncategorizedProducts,
+            ];
+        }
+
         return $this->render('admin/dashboard.html.twig', [
             'kpis' => [
                 'users' => $totalUsers,
@@ -73,6 +131,7 @@ final class AdminController extends AbstractController
                 $topProducts
             ),
             'latestOrders' => $latestOrders,
+            'categoryFilters' => $filterCategories,
         ]);
     }
 
@@ -82,7 +141,33 @@ final class AdminController extends AbstractController
         $range = max(1, (int) $request->query->get('range', 30));
         $from = (new \DateTimeImmutable(sprintf('-%d days', $range)))->setTime(0, 0);
 
-        $dailySales = $this->buildDailySalesDataset($em, $from, self::PAID_STATUSES);
+        $categoryParam = $request->query->get('category');
+        $productParam = $request->query->get('product');
+
+        $categoryId = null;
+        $onlyUncategorized = false;
+
+        if (\is_string($categoryParam) && $categoryParam !== '' && $categoryParam !== 'all') {
+            if ('uncategorized' === $categoryParam) {
+                $onlyUncategorized = true;
+            } elseif (ctype_digit($categoryParam)) {
+                $categoryId = (int) $categoryParam;
+            }
+        }
+
+        $productId = null;
+        if (\is_string($productParam) && $productParam !== '' && $productParam !== 'all' && ctype_digit($productParam)) {
+            $productId = (int) $productParam;
+        }
+
+        $dailySales = $this->buildDailySalesDataset(
+            $em,
+            $from,
+            self::PAID_STATUSES,
+            $categoryId,
+            $productId,
+            $onlyUncategorized
+        );
 
         return $this->json([
             'labels' => $dailySales['labels'],
@@ -163,11 +248,21 @@ final class AdminController extends AbstractController
      * @param list<string> $statuses
      * @return array{labels: list<string>, data: list<float>}
      */
-    private function buildDailySalesDataset(EntityManagerInterface $em, \DateTimeImmutable $from, array $statuses): array
+    private function buildDailySalesDataset(
+        EntityManagerInterface $em,
+        \DateTimeImmutable $from,
+        array $statuses,
+        ?int $categoryId = null,
+        ?int $productId = null,
+        bool $onlyUncategorized = false
+    ): array
     {
         $orders = $em->createQueryBuilder()
-            ->select('o')
+            ->select('o', 'oi', 'p', 'c')
             ->from(Order::class, 'o')
+            ->leftJoin('o.orderItems', 'oi')
+            ->leftJoin('oi.product', 'p')
+            ->leftJoin('p.category', 'c')
             ->where('o.createdAt >= :from')
             ->andWhere('o.status IN (:statuses)')
             ->setParameter('from', $from)
@@ -188,7 +283,40 @@ final class AdminController extends AbstractController
             }
 
             $key = $createdAt->format('Y-m-d');
-            $totals[$key] = ($totals[$key] ?? 0.0) + (float) $order->getTotal();
+            if (null === $categoryId && null === $productId && false === $onlyUncategorized) {
+                $totals[$key] = ($totals[$key] ?? 0.0) + (float) $order->getTotal();
+                continue;
+            }
+
+            $matchingTotal = 0.0;
+            foreach ($order->getOrderItems() as $orderItem) {
+                if (!$orderItem instanceof OrderItem) {
+                    continue;
+                }
+
+                $product = $orderItem->getProduct();
+
+                if (null !== $productId) {
+                    if (!$product || $product->getId() !== $productId) {
+                        continue;
+                    }
+                } elseif ($onlyUncategorized) {
+                    if ($product && null !== $product->getCategory()) {
+                        continue;
+                    }
+                } elseif (null !== $categoryId) {
+                    $category = $product?->getCategory();
+                    if (!$category || $category->getId() !== $categoryId) {
+                        continue;
+                    }
+                }
+
+                $matchingTotal += (float) $orderItem->getSubtotal();
+            }
+
+            if ($matchingTotal > 0.0) {
+                $totals[$key] = ($totals[$key] ?? 0.0) + $matchingTotal;
+            }
         }
 
         ksort($totals);

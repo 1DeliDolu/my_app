@@ -29,9 +29,16 @@
                       <li class="nav-item">
                           <a class="nav-link" href="{{ path('app_home') }}">Home</a>
                       </li>
+                      <!-- admin ise kategoriler eklenecek -->
+                       {% if is_granted('ROLE_ADMIN') %}
                       <li class="nav-item">
                           <a class="nav-link" href="{{ path('app_category_index') }}">Categories</a>
                       </li>
+                      <!-- burada admin ise ürün yönetimi linki eklenebilir -->
+                       <li class="nav-item">
+                          <a class="nav-link" href="{{ path('app_product_index') }}">Products</a>
+                      </li>
+                      {% endif %}
                   </ul>
 
                   <div class="d-flex align-items-center gap-3">

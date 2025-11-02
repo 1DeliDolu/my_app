@@ -9,6 +9,26 @@
                 "enabled": false,
                 "fetch": "eager"
             }
+        },
+        "chart": {
+            "enabled": true,
+            "fetch": "lazy"
+        },
+        "kpi": {
+            "enabled": true,
+            "fetch": "eager"
+        },
+        "orders": {
+            "enabled": true,
+            "fetch": "lazy"
+        },
+        "csrf-protection": {
+            "enabled": true,
+            "fetch": "lazy"
+        },
+        "hello": {
+            "enabled": false,
+            "fetch": "lazy"
         }
     },
     "entrypoints": []

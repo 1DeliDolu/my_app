@@ -1,8 +1,12 @@
 {% set numeric = numeric_value|default(value) %}
 {% set decimals = decimals|default(0) %}
 {% set suffix = suffix|default('') %}
+{% set hasLink = link is defined and link %}
 <div class="{{ col_class|default('col-md-3') }}">
-  <div class="card p-3 text-center shadow-sm h-100">
+  <{{ hasLink ? 'a' : 'div' }}
+    {% if hasLink %}href="{{ link|e('html_attr') }}"{% endif %}
+    class="card p-3 text-center shadow-sm h-100{% if hasLink %} text-reset text-decoration-none{% endif %}"
+  >
     {% if icon is defined %}
       <div class="fs-2 mb-2" aria-hidden="true">{{ icon }}</div>
     {% endif %}
@@ -15,5 +19,5 @@
         {% if suffix %}data-kpi-suffix-value="{{ suffix|e('html_attr') }}"{% endif %}
       >0</span>
     </p>
-  </div>
+  </{{ hasLink ? 'a' : 'div' }}>
 </div>
