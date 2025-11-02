@@ -1,86 +1,92 @@
+# 🛍️ PehliONE – Symfony 7.3 E-Commerce Platform
 
-
-# PehliONE – Symfony 7.3 E-Commerce
-
-> Beispiel-Onlineshop auf Basis von  **Symfony 7.3** : vom Stöbern über den **Warenkorb** bis zur **Bestellung** – inkl.  **Rollenverwaltung** , **Adressverwaltung** und  **transaktionalen 
-
----
-
-## Funktionsumfang
-
-* Startseite mit **Kategoriefilter** und **dynamischer Produktliste**
-* Produktdetailseiten mit **Warenkorb-Integration** (AJAX-Feedback, Mengensteuerung)
-* Sitzungsgestützter  **Warenkorb** : Aktualisieren, Entfernen, Leeren
-* **Checkout** : Adressauswahl, Bestellübersicht,  **simulierter Bezahlvorgang** , E-Mail-Bestätigung
-* **Benutzerregistrierung** inkl. E-Mail-Verifizierung & Willkommensmail
-* **Rollen- & Nutzerverwaltung** (Admin / Employee / Customer)
-* **Produktverwaltung (CRUD)** inkl. Kategoriezuordnung
-* **Persönliche Adressverwaltung** und **Bestellübersicht** für eingeloggte Kund:innen
+> A full-featured **Symfony 7.3** e-commerce demo – from browsing and cart to checkout and order confirmation.
+>
+> Includes **user roles** , **address management** , and **transactional emails** — designed for modularity and scalability.
 
 ---
 
-## Technologie-Stack
+## 🚀 Features
 
-* **Backend:** PHP ≥ 8.2,  **Symfony 7.3** , Doctrine ORM, Twig
-* **Frontend:** Symfony **AssetMapper** & **Stimulus** (für Interaktionen)
-* **Datenbank:** MySQL 8 / PostgreSQL (per Docker verfügbar), Doctrine Migrations & Fixtures
-* **Mailing:** Symfony Mailer mit **Mailtrap** (vorkonfigurierbar)
-* **Tests:** PHPUnit 12, Faker für Seed-Daten
-
----
-
-## Voraussetzungen
-
-* PHP 8.2 (CLI) inkl. Extensions: `ctype`, `iconv`, `pdo_mysql` **oder** `pdo_pgsql`
-* Composer
-* Relationale Datenbank (Standard:  **MySQL 8** ; optional Docker Compose für PostgreSQL)
-* Symfony CLI (empfohlen) oder alternativer Webserver
-* Optional: Node.js/NPM (falls zusätzliche Tools benötigt werden)
-
-> **Hinweis:** Der Symfony-Code liegt unter `my_app/`. Befehle unten gehen von diesem Verzeichnis aus.
+- 🏠 **Homepage** with category filters and dynamic product listings
+- 🛒 **Cart system** (session-based): add, update, remove, and clear items
+- 💳 **Checkout flow** with address selection, order summary, and _simulated payment_
+- ✉️ **Email verification** & welcome email on registration
+- 👥 **Role-based access control:** Admin / Employee / Customer
+- ⚙️ **Product CRUD management** with category relations (admin only)
+- 📦 **Customer area:** address book & order history
+- 🔔 **AJAX interactions** (cart badge, product add, modal confirmation)
+- 📈 **Admin dashboard** with live statistics (via Chart.js)
 
 ---
 
-## Installation & Ersteinrichtung
+## 🧰 Tech Stack
 
-1. **Abhängigkeiten installieren**
+| Layer        | Technology                                    |
+| ------------ | --------------------------------------------- |
+| **Backend**  | PHP ≥ 8.2 · Symfony 7.3 · Doctrine ORM · Twig |
+| **Frontend** | Symfony AssetMapper · Stimulus · Bootstrap 5  |
+| **Database** | MySQL 8 / PostgreSQL (via Docker)             |
+| **Mailing**  | Symfony Mailer · Mailtrap (sandbox)           |
+| **Testing**  | PHPUnit 12 · Faker (for seed data)            |
+
+---
+
+## ⚙️ Prerequisites
+
+- PHP 8.2 + extensions: `ctype`, `iconv`, `pdo_mysql` or `pdo_pgsql`
+- Composer
+- Relational database (MySQL 8 by default)
+- Symfony CLI (recommended)
+- _(optional)_ Node.js / NPM for advanced front-end builds
+
+> 💡 The Symfony source lives in `my_app/`.
+>
+> All commands below assume you are inside that directory.
+
+---
+
+## 🏗️ Installation & Setup
+
+### 1️⃣ Install dependencies
 
 ```bash
 cd my_app
 composer install
 ```
 
-2. **Umgebungsvariablen setzen** (`.env.local` erstellen)
+### 2️⃣ Configure environment
+
+Create your local environment file:
 
 ```bash
 cp .env .env.local
-# In .env.local: DATABASE_URL, MAILER_DSN etc. anpassen
 ```
 
-Beispiele:
+Then edit `.env.local`:
 
 ```dotenv
-# MySQL
+# Database (MySQL)
 DATABASE_URL="mysql://user:pass@127.0.0.1:3306/app?serverVersion=8.0.32&charset=utf8mb4"
 
-# Mailtrap (SMTP)
+# Mailtrap sandbox (SMTP)
 MAILER_DSN="smtp://<MAILTRAP_USER>:<MAILTRAP_PASS>@sandbox.smtp.mailtrap.io:2525"
 ```
 
-3. **Datenbank vorbereiten**
+### 3️⃣ Create and migrate the database
 
 ```bash
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate -n
 ```
 
-4. **Beispieldaten laden** (Kategorien, Produkte, Demo-User)
+### 4️⃣ Load demo fixtures
 
 ```bash
 php bin/console doctrine:fixtures:load -n
 ```
 
-5. **(Optional) Datenbank via Docker starten**
+### 5️⃣ _(Optional)_ Start via Docker
 
 ```bash
 docker compose up -d database
@@ -88,105 +94,169 @@ docker compose up -d database
 
 ---
 
-## Entwicklung starten
+## 🧑‍💻 Development
 
-* **Webserver:**
-  ```bash
-  symfony server:start -d
-  # oder
-  php -S localhost:8000 -t public
-  ```
-* **Assets kompilieren:**
-  ```bash
-  php bin/console asset-map:compile      # --watch für Live-Reload
-  ```
-* **E-Mails:** Standardmäßig über **Mailtrap** (per `MAILER_DSN`)
+### Local web server
 
----
+```bash
+symfony server:start -d
+# or
+php -S localhost:8000 -t public
+```
 
-## Demo-Zugänge
+### Asset compilation
 
-| E-Mail                                     | Passwort    | Rolle         |
-| ------------------------------------------ | ----------- | ------------- |
-| [admin@shop.com](mailto:admin@shop.com)       | admin123    | ROLE_ADMIN    |
-| [employee@shop.com](mailto:employee@shop.com) | employee123 | ROLE_EMPLOYEE |
-| [customer@shop.com](mailto:customer@shop.com) | customer123 | ROLE_CUSTOMER |
+```bash
+php bin/console asset-map:compile      # use --watch for live reload
+```
+
+### Mail testing
+
+E-mails are sent through **Mailtrap** — customize the `MAILER_DSN` if needed.
 
 ---
 
-## Projektstruktur
+## 🔑 Demo Accounts
+
+| E-Mail              | Password      | Role          |
+| ------------------- | ------------- | ------------- |
+| `admin@shop.com`    | `admin123`    | ROLE_ADMIN    |
+| `employee@shop.com` | `employee123` | ROLE_EMPLOYEE |
+| `customer@shop.com` | `customer123` | ROLE_CUSTOMER |
+
+---
+
+## 🧭 Project Structure
 
 ```
 my_app/
-├─ assets/        # AssetMapper, Stimulus-Controller, Styles
-├─ migrations/    # Doctrine-Migrationen
-├─ public/        # Webroot (index.php), ausgelieferte Assets
-├─ src/           # Controller, Services, Entities, Repos, Forms
-├─ templates/     # Twig (Seiten, Partials, E-Mails)
-├─ tests/         # PHPUnit-Tests (Cart/Category etc.)
+├─ assets/        # Stimulus controllers, styles, asset mapper
+├─ migrations/    # Doctrine migrations
+├─ public/        # Web root (index.php), static assets
+├─ src/           # Controllers, Services, Entities, Repositories, Forms
+├─ templates/     # Twig templates (pages, layouts, emails)
+├─ tests/         # PHPUnit tests (Cart, Category, etc.)
 └─ composer.json
 ```
 
 ---
 
-## Nützliche Befehle
+## 🧩 Common Commands
 
 ```bash
-# Routen ansehen
+# List routes
 php bin/console debug:router
 
-# DB-Schema prüfen
+# Validate database schema
 php bin/console doctrine:schema:validate
 
-# Cache leeren
+# Clear cache
 php bin/console cache:clear
 
-# Tests ausführen
+# Run test suite
 php bin/phpunit
 ```
 
 ---
 
-## Hinweise für Produktion
+## 🏁 Production Notes
 
-* In `.env.local` mindestens setzen:
+- Update `.env.local`:
   ```dotenv
   APP_ENV=prod
-  APP_SECRET=<zufälliger_geheimer_wert>
+  APP_SECRET=<your_random_secret>
   ```
-* **Echte SMTP/API-Zugangsdaten** hinterlegen (`MAILER_DSN`)
-* **Assets** bündeln:
+- Provide **real SMTP credentials** (`MAILER_DSN`)
+- Compile optimized assets:
   ```bash
   php bin/console asset-map:compile --env=prod
   ```
-* **SSL/TLS** aktivieren und **Backups** (DB, Assets) einrichten
+- Enable **HTTPS (TLS)** and regular **database backups**
 
 ---
 
-## Troubleshooting
+## 🧠 Troubleshooting
 
-* **DB-Loginfehler (SQLSTATE[HY000] [1045])**
-
-  → `DATABASE_URL` prüfen (User/Pass/Host/Port), DB-User-Rechte anpassen.
-* **Spalten dürfen nicht NULL sein (Fixtures)**
-
-  → In Entities Timestamps (z. B. `createdAt`, `updatedAt`) im Konstruktor setzen oder in Fixtures füllen.
-* **`decimal(10,2)` Fehler beim Maker**
-
-  → Typ nur `decimal` wählen; **Precision** `10`, **Scale** `2` im Prompt angeben.
-* **Kein `make:service`**
-
-  → Services einfach unter `src/Service/` anlegen; Symfony entdeckt sie automatisch (DI).
-* **Mail kommt nicht an**
-
-  → `MAILER_DSN` (Mailtrap) prüfen; in der Mailtrap-Inbox nachsehen.
+| Problem                                | Ursache / Lösung                                                            |
+| -------------------------------------- | --------------------------------------------------------------------------- |
+| ❌*SQLSTATE[HY000] [1045]*             | DB-URL oder Benutzerrechte prüfen                                           |
+| ⚠️*Column ‘created_at’ cannot be null* | `createdAt`/`updatedAt`im Entity-Konstruktor initialisieren                 |
+| 🧮*Invalid type decimal(10,2)*         | Nur `decimal`eingeben → Precision: 10, Scale: 2                             |
+| 🧩*No command: make:service*           | Service manuell unter `src/Service/`anlegen – Symfony autowired automatisch |
+| 📧*Mail not arriving*                  | `MAILER_DSN`in `.env.local`und Mailtrap-Inbox prüfen                        |
 
 ---
 
-### Zahlungsfluss (aktuell *fake* Simulation)
+## 💳 Payment Flow (Simulated)
 
-* Button **“Pay Now”** → Route `app_checkout_pay`
-* Controller prüft Besitz, simuliert Zahlung (`sleep(2)`), setzt Status  **Paid** , sendet  **Bestätigungs-E-Mail** , leitet zur **Success-Seite** weiter
-* Austauschbar gegen Stripe/iyzico – API-Calls können an derselben Stelle integriert werden
+1. 🖱️ User clicks **Pay Now** → triggers `app_checkout_pay`
+2. 🔒 Controller verifies ownership, simulates a 2-second delay
+3. 💰 Order status → **Paid** , timestamps set, confirmation email sent
+4. ✅ Redirects to success page with flash message
+5. _(Ready to swap with Stripe / iyzico API integration later)_
 
 ---
+
+## 📊 Admin Dashboard (optional extension)
+
+- Visualized via **Chart.js (CDN)**
+- Shows total sales, orders, and user activity
+- Replace the fake data provider with real queries using Doctrine repositories
+
+---
+
+## 🧾 License
+
+MIT License — free for personal & commercial use.
+
+---
+
+### ✨ Authors & Credits
+
+Created with ❤️ using **Symfony 7.3**
+
+Built for learning, prototyping, and demonstration purposes.
+
+---
+
+## Customer Homepage
+
+![1762118383674](image/README/1762118383674.png)
+
+---
+
+## Admin Dashboard
+
+![1762118485065](image/README/1762118485065.png)
+
+---
+
+## Admin Dashboard
+
+![1762118530736](image/README/1762118530736.png)
+
+![1762118567362](image/README/1762118567362.png)
+
+---
+
+## User Management
+
+![1762118598664](image/README/1762118598664.png)
+
+---
+
+## Products
+
+![1762118674552](image/README/1762118674552.png)
+
+---
+
+## Product Details
+
+![1762118799366](image/README/1762118799366.png)
+
+![1762118824864](image/README/1762118824864.png)
+
+![1762118844087](image/README/1762118844087.png)
+
+![1762118959437](image/README/1762118959437.png)

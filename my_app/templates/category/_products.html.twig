@@ -20,11 +20,11 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <small class="text-muted">{{ product.price|number_format(2, ',', '.') }} ₺</small>
                             <span class="badge bg-light text-success border border-success-subtle">
-                                {{ stockValue is not null ? 'Stok: ' ~ stockValue : 'Stokta' }}
+                                {{ stockValue is not null ? 'Stock: ' ~ stockValue : 'In Stock' }}
                             </span>
                         </div>
                         <div class="d-flex gap-2 mt-3">
-                            <a href="{{ path('app_product_show', {id: product.id}) }}" class="btn btn-outline-primary btn-sm flex-fill">Detay</a>
+                            <a href="{{ path('app_product_show', {id: product.id}) }}" class="btn btn-outline-primary btn-sm flex-fill">Details</a>
                             <button
                                 type="button"
                                 class="btn btn-success btn-sm add-to-cart flex-fill"
@@ -33,7 +33,7 @@
                                 data-cart-url="{{ path('app_cart_add', {id: product.id}) }}"
                                 data-quantity="1"
                             >
-                                Sepete Ekle
+                                Add to Cart
                             </button>
                         </div>
                     </div>
@@ -41,6 +41,6 @@
             </div>
         </div>
     {% else %}
-        <p>Henüz ürün bulunamadı.</p>
+        <p>No products found yet.</p>
     {% endfor %}
 </div>

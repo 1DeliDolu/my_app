@@ -6,15 +6,15 @@
 <div class="container">
     <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start mb-4 gap-3">
         <div>
-            <h1 class="h3 mb-1">Ürünü Düzenle</h1>
-            <small class="text-muted">Ürün bilgilerini güncelleyin ve değişiklikleri kaydedin.</small>
+            <h1 class="h3 mb-1">Edit Product</h1>
+            <small class="text-muted">Update the product information and save your changes.</small>
         </div>
-        <a href="{{ path('app_product_index') }}" class="btn btn-outline-secondary btn-sm">Listeye Dön</a>
+        <a href="{{ path('app_product_index') }}" class="btn btn-outline-secondary btn-sm">Back to List</a>
     </div>
 
     <div class="product-edit-layout d-flex flex-column flex-lg-row align-items-start gap-4">
         <div class="product-edit-form flex-grow-1 shadow-sm border rounded-4 p-4 bg-white">
-            {{ include('product/_form.html.twig', {'button_label': 'Güncelle'}) }}
+            {{ include('product/_form.html.twig', {'button_label': 'Update'}) }}
         </div>
 
         <aside class="product-edit-preview shadow-sm border rounded-4 bg-white p-4 text-center" style="min-width: 260px;">
@@ -25,12 +25,12 @@
             </div>
 
             <h5 class="mb-1">{{ product.name }}</h5>
-            <p class="text-muted small mb-3">Oluşturuldu: {{ product.createdAt ? product.createdAt|date('d M Y H:i') : '—' }}</p>
+            <p class="text-muted small mb-3">Created: {{ product.createdAt ? product.createdAt|date('d M Y H:i') : '—' }}</p>
 
             <div class="d-flex flex-column gap-2">
                 <span class="badge bg-light text-secondary border">ID: {{ product.id }}</span>
                 {{ include('product/_delete_form.html.twig', {
-                    button_label: 'Sil',
+                    button_label: 'Delete',
                     button_class: 'btn btn-sm btn-outline-danger w-100'
                 }) }}
             </div>

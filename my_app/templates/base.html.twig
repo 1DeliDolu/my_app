@@ -29,13 +29,11 @@
                       <li class="nav-item">
                           <a class="nav-link" href="{{ path('app_home') }}">Home</a>
                       </li>
-                      <!-- admin ise kategoriler eklenecek -->
-                       {% if is_granted('ROLE_ADMIN') %}
+                      {% if is_granted('ROLE_ADMIN') %}
                       <li class="nav-item">
                           <a class="nav-link" href="{{ path('app_category_index') }}">Categories</a>
                       </li>
-                      <!-- burada admin ise ürün yönetimi linki eklenebilir -->
-                       <li class="nav-item">
+                      <li class="nav-item">
                           <a class="nav-link" href="{{ path('app_product_index') }}">Products</a>
                       </li>
                       {% endif %}
@@ -115,19 +113,19 @@
           <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content shadow-lg border-0">
                   <div class="modal-header bg-success text-white">
-                      <h5 class="modal-title">Ürün sepete eklendi</h5>
+                      <h5 class="modal-title">Product Added to Cart</h5>
                       <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                      <p class="mb-1 text-muted">Sepete eklenen ürün:</p>
+                      <p class="mb-1 text-muted">Added product:</p>
                       <p class="h5 mb-3" id="modal-product-name">—</p>
                       <p class="text-muted mb-0">
-                          Alışverişe devam etmek ister misiniz yoksa sepetinize gitmek mi istersiniz?
+                          Would you like to continue shopping or go to your cart?
                       </p>
                   </div>
                   <div class="modal-footer bg-light border-0">
-                      <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Alışverişe Devam Et</button>
-                      <a href="{{ path('app_cart_index') }}" class="btn btn-success">Sepete Git</a>
+                      <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Continue Shopping</button>
+                      <a href="{{ path('app_cart_index') }}" class="btn btn-success">Go to Cart</a>
                   </div>
               </div>
           </div>
@@ -243,14 +241,14 @@
 
                       const modalProductName = document.getElementById('modal-product-name');
                       if (modalProductName) {
-                          modalProductName.textContent = button.dataset.productName || 'Ürün';
+                          modalProductName.textContent = button.dataset.productName || 'Product';
                       }
 
                       const addToCartModal = getAddToCartModal();
                       if (addToCartModal) {
                           addToCartModal.show();
                       } else {
-                          const goToCart = window.confirm('Ürün sepete eklendi. Sepete gitmek ister misiniz?');
+                          const goToCart = window.confirm('Product added to cart. Would you like to go to your cart?');
                           if (goToCart) {
                               window.location.href = '{{ path('app_cart_index') }}';
                           }
@@ -264,114 +262,13 @@
                   }
               } catch (error) {
                   console.error('Add to cart error:', error);
-                  alert('Ürün sepete eklenirken bir sorun oluştu. Lütfen tekrar deneyin.');
+                  alert('An error occurred while adding the product to your cart. Please try again.');
               } finally {
                   button.disabled = false;
                   button.classList.remove('opacity-50');
               }
           });
       };
-
-      const initCategoryFilters = () => {
-          const categoryList = document.getElementById('category-list');
-          const productList = document.getElementById('product-list');
-
-          if (!categoryList || !productList) {
-              return;
-          }
-
-          if (categoryList.dataset.bound === 'true') {
-              return;
-          }
-          categoryList.dataset.bound = 'true';
-
-          const categoryTitle = document.getElementById('category-title');
-          const categoryDescription = document.getElementById('category-description');
-
-          const setActive = (activeElement) => {
-              categoryList.querySelectorAll('.list-group-item').forEach((item) => {
-                  item.classList.toggle('active', item === activeElement);
-              });
-          };
-
-          const updateCategoryDetails = (sourceElement) => {
-              if (!sourceElement) {
-                  return;
-              }
-
-              if (categoryTitle) {
-                  categoryTitle.textContent = sourceElement.dataset.categoryName || 'Products';
-              }
-
-              if (categoryDescription) {
-                  const description = sourceElement.dataset.categoryDescription || '';
-                  categoryDescription.textContent = description;
-                  categoryDescription.classList.toggle('d-none', description.trim().length === 0);
-              }
-          };
-
-          const loadProducts = async (url, activeElement) => {
-              if (!url) {
-                  return;
-              }
-
-              try {
-                  const response = await fetch(url, {
-                      headers: {
-                          'X-Requested-With': 'XMLHttpRequest',
-                      },
-                  });
-
-                  if (!response.ok) {
-                      throw new Error(`Failed to load products: ${response.status}`);
-                  }
-
-                  const html = await response.text();
-                  productList.innerHTML = html;
-                  setActive(activeElement);
-                  updateCategoryDetails(activeElement);
-                  attachAddToCartHandlers();
-              } catch (error) {
-                  console.error('Error loading products:', error);
-              }
-          };
-
-          categoryList.addEventListener('click', async (event) => {
-              const link = event.target.closest('a.list-group-item');
-              if (!link || !categoryList.contains(link)) {
-                  return;
-              }
-
-              const url = link.dataset.productsUrl;
-              if (!url) {
-                  return;
-              }
-
-              event.preventDefault();
-              await loadProducts(url, link);
-          });
-      };
-
-      const refreshCartBadge = () => {
-          const cartCountEl = document.getElementById('cart-count');
-          if (!cartCountEl) {
-              return;
-          }
-          updateCartCount(cartCountEl.textContent);
-      };
-
-      document.addEventListener('DOMContentLoaded', () => {
-          initUserDropdown();
-          attachAddToCartHandlers();
-          initCategoryFilters();
-          refreshCartBadge();
-      });
-
-      document.addEventListener('turbo:load', () => {
-          initUserDropdown();
-          initCategoryFilters();
-          refreshCartBadge();
-      });
       </script>
 {% endblock %}
   </body>
