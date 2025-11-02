@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+{% block title %}My Cart{% endblock %}
+
+{% block body %}
+<h2>🛒 My Cart</h2>
+
+<table class="table mt-3">
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Price</th>
+      <th>Quantity</th>
+      <th>Subtotal</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+      <tr>
+        <td>{{ item.product.name }}</td>
+        <td>{{ item.unitPrice|number_format(2) }} ₺</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.subtotal|number_format(2) }} ₺</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="4" class="text-center text-muted">Cart is empty</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h4 class="text-end mt-3">Total: {{ total|number_format(2) }} ₺</h4>
+{% endblock %}
