@@ -2,22 +2,7 @@
 
 # PehliONE – Symfony 7.3 E-Commerce
 
-> Beispiel-Onlineshop auf Basis von  **Symfony 7.3** : vom Stöbern über den **Warenkorb** bis zur **Bestellung** – inkl.  **Rollenverwaltung** , **Adressverwaltung** und  **transaktionalen E-Mails** .
-
----
-
-## Inhaltsverzeichnis
-
-* [Funktionsumfang](https://chatgpt.com/c/690666ba-a3c4-8330-8196-5067f1b03c12#funktionsumfang)
-* [Technologie-Stack](https://chatgpt.com/c/690666ba-a3c4-8330-8196-5067f1b03c12#technologie-stack)
-* [Voraussetzungen](https://chatgpt.com/c/690666ba-a3c4-8330-8196-5067f1b03c12#voraussetzungen)
-* [Installation &amp; Ersteinrichtung](https://chatgpt.com/c/690666ba-a3c4-8330-8196-5067f1b03c12#installation--ersteinrichtung)
-* [Entwicklung starten](https://chatgpt.com/c/690666ba-a3c4-8330-8196-5067f1b03c12#entwicklung-starten)
-* [Demo-Zugänge](https://chatgpt.com/c/690666ba-a3c4-8330-8196-5067f1b03c12#demo-zug%C3%A4nge)
-* [Projektstruktur](https://chatgpt.com/c/690666ba-a3c4-8330-8196-5067f1b03c12#projektstruktur)
-* [Nützliche Befehle](https://chatgpt.com/c/690666ba-a3c4-8330-8196-5067f1b03c12#n%C3%BCtzliche-befehle)
-* [Hinweise für Produktion](https://chatgpt.com/c/690666ba-a3c4-8330-8196-5067f1b03c12#hinweise-f%C3%BCr-produktion)
-* [Troubleshooting](https://chatgpt.com/c/690666ba-a3c4-8330-8196-5067f1b03c12#troubleshooting)
+> Beispiel-Onlineshop auf Basis von  **Symfony 7.3** : vom Stöbern über den **Warenkorb** bis zur **Bestellung** – inkl.  **Rollenverwaltung** , **Adressverwaltung** und  **transaktionalen 
 
 ---
 
