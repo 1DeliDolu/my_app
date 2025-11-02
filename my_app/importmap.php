@@ -25,10 +25,16 @@ return [
     '@hotwired/turbo' => [
         'version' => '7.3.0',
     ],
+    'chart.js' => [
+        'version' => '4.5.1',
+    ],
     'chart.js/auto' => [
-        'url' => 'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.esm.js',
+        'version' => '4.4.4',
     ],
     'chart.js/helpers' => [
-        'url' => 'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/helpers.esm.js',
+        'version' => '4.4.4',
+    ],
+    '@kurkle/color' => [
+        'version' => '0.3.4',
     ],
 ];
