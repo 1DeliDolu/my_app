@@ -1,3 +1,28 @@
 body {
-    background-color: skyblue;
+    min-height: 100vh;
+    background-color: #f4f8fc;
+    font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+    color: #1f2937;
+}
+
+.breadcrumb {
+    background: transparent;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+h2,
+h3 {
+    font-weight: 700;
+    color: #1d1d1d;
+}
+
+.card {
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.container {
+    max-width: 1300px;
 }

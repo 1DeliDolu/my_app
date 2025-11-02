@@ -7,8 +7,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Category;
+use App\Entity\OrderItem;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Product
 {
     #[ORM\Id]
@@ -31,10 +33,10 @@ class Product
     #[ORM\Column(length: 255)]
     private ?string $image = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(targetEntity: Category::class)]
@@ -50,6 +52,9 @@ class Product
     public function __construct()
     {
         $this->orderItems = new ArrayCollection();
+        $now = new \DateTimeImmutable();
+        $this->createdAt = $now;
+        $this->updatedAt = $now;
     }
 
     public function getId(): ?int
@@ -139,6 +144,24 @@ class Product
         $this->updatedAt = $updatedAt;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function ensureTimestampsOnCreate(): void
+    {
+        $now = new \DateTimeImmutable();
+
+        if (null === $this->createdAt) {
+            $this->createdAt = $now;
+        }
+
+        $this->updatedAt = $now;
+    }
+
+    #[ORM\PreUpdate]
+    public function refreshUpdatedAt(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function getCategory(): ?Category

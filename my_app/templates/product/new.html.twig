@@ -3,9 +3,27 @@
 {% block title %}New Product{% endblock %}
 
 {% block body %}
-    <h1>Create new Product</h1>
+<div class="container">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start mb-4 gap-3">
+        <div>
+            <h1 class="h3 mb-1">Yeni Ürün Ekle</h1>
+            <small class="text-muted">Mağazanıza yeni bir ürün ekleyin ve kategori belirleyin.</small>
+        </div>
+        <a href="{{ path('app_product_index') }}" class="btn btn-outline-secondary btn-sm">Listeye Dön</a>
+    </div>
 
-    {{ include('product/_form.html.twig') }}
+    <div class="product-edit-layout d-flex flex-column flex-lg-row align-items-start gap-4">
+        <div class="product-edit-form flex-grow-1 shadow-sm border rounded-4 p-4 bg-white">
+            {{ include('product/_form.html.twig', {'button_label': 'Kaydet'}) }}
+        </div>
 
-    <a href="{{ path('app_product_index') }}">back to list</a>
+        <aside class="product-edit-preview shadow-sm border rounded-4 bg-white p-4 text-center" style="min-width: 260px;">
+            <div class="ratio ratio-1x1 mb-3">
+                <img src="https://via.placeholder.com/300x300?text=Product" alt="Preview" class="img-fluid rounded-3 object-fit-contain border">
+            </div>
+            <h5 class="mb-1">Ürün Önizlemesi</h5>
+            <p class="text-muted small mb-0">Formu doldurdukça ürün detayları önizlemede hazır olacak.</p>
+        </aside>
+    </div>
+</div>
 {% endblock %}

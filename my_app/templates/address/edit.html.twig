@@ -2,17 +2,37 @@
 
 {% block title %}Edit Address{% endblock %}
 
-{% block breadcrumb %}
-    {% include 'partials/_breadcrumb.html.twig' with {
-        items: [
-            { label: 'Home', url: path('app_home') },
-            { label: 'My Addresses', url: path('app_address_index') },
-            { label: 'Edit' }
-        ]
-    } %}
-{% endblock %}
-
 {% block body %}
-<h2 class="mb-3">Edit Address</h2>
-{% include 'address/_form.html.twig' with { form: form, button_label: 'Update'} %}
+<div class="bg-light py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="card-header bg-primary text-white py-4 border-0">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="d-inline-flex justify-content-center align-items-center bg-white text-primary rounded-circle shadow-sm" style="width: 48px; height: 48px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                                </svg>
+                            </span>
+                            <div>
+                                <h2 class="h4 mb-1">Edit Address</h2>
+                                <p class="mb-0 text-white-50">Keep your delivery details accurate to avoid delays.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-4 p-md-5 bg-white">
+                        {% include 'address/_form.html.twig' with { form: form, button_label: 'Update'} %}
+                    </div>
+                    <div class="card-footer bg-white pt-0 px-4 pb-4">
+                        <div class="alert alert-light border-0 d-flex align-items-center gap-3 mb-0">
+                            <span class="badge bg-primary text-white rounded-pill">Note</span>
+                            <span class="text-muted">Address updates apply immediately to your next order.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -13,6 +13,22 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/category')]
 final class CategoryController extends AbstractController
 {
+    #[Route('/', name: 'app_category_index', methods: ['GET'])]
+    public function index(CategoryRepository $categoryRepository, ProductRepository $productRepository): Response
+    {
+        $categories = $categoryRepository->findAll();
+
+        $categoryCounts = [];
+        foreach ($categories as $category) {
+            $categoryCounts[$category->getSlug()] = $productRepository->count(['category' => $category]);
+        }
+
+        return $this->render('category/index.html.twig', [
+            'categories' => $categories,
+            'categoryCounts' => $categoryCounts,
+        ]);
+    }
+
     #[Route('/{slug}', name: 'app_category_show')]
     public function show(#[MapEntity(mapping: ['slug' => 'slug'])] Category $category, ProductRepository $productRepository, CategoryRepository $categoryRepository): Response
     {
@@ -22,10 +38,16 @@ final class CategoryController extends AbstractController
         // also pass all categories for the sidebar
         $categories = $categoryRepository->findAll();
 
+        $categoryCounts = [];
+        foreach ($categories as $cat) {
+            $categoryCounts[$cat->getSlug()] = $productRepository->count(['category' => $cat]);
+        }
+
         return $this->render('category/show.html.twig', [
             'category' => $category,
             'products' => $products,
             'categories' => $categories,
+            'categoryCounts' => $categoryCounts,
         ]);
     }
 

@@ -13,48 +13,158 @@
 {% endblock %}
 
 {% block body %}
-    <h1>{{ product.name }}</h1>
+    {% set imagePath = resolve_image_path(product.image) %}
+    {% set stockValue = product.stock is not null ? product.stock + 0 : null %}
+    {% set maxQuantity = stockValue is not null and stockValue > 0 ? stockValue : 99 %}
+    {% set isOutOfStock = stockValue is not null and stockValue <= 0 %}
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ product.id }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <td>{{ product.name }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ product.description }}</td>
-            </tr>
-            <tr>
-                <th>Price</th>
-                <td>{{ product.price }}</td>
-            </tr>
-            <tr>
-                <th>Stock</th>
-                <td>{{ product.stock }}</td>
-            </tr>
-            <tr>
-                <th>Image</th>
-                <td>{{ product.image }}</td>
-            </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ product.createdAt ? product.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdatedAt</th>
-                <td>{{ product.updatedAt ? product.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="container py-4 px-4 product-detail-page">
+        {{ block('breadcrumb') }}
 
-    <a href="{{ path('app_product_index') }}">back to list</a>
+        <div class="row g-4 g-lg-5 align-items-start">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body bg-light border rounded-4 p-4 d-flex align-items-center justify-content-center">
+                        {% if imagePath %}
+                            <img src="{{ imagePath }}" alt="{{ product.name }}" class="img-fluid rounded-3 shadow-sm">
+                        {% else %}
+                            <div class="text-center text-muted w-100 py-5">
+                                <span class="display-6">No image available</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
-    <a href="{{ path('app_product_edit', {'id': product.id}) }}">edit</a>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex flex-column gap-3">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                                <div>
+                                    <h1 class="h3 mb-1">{{ product.name }}</h1>
+                                    <p class="text-muted mb-0">
+                                        {{ product.category ? product.category.name : 'Uncategorized' }}
+                                    </p>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    {% if stockValue is not null %}
+                                        <span class="badge {{ isOutOfStock ? 'bg-danger' : 'bg-primary-subtle text-primary-emphasis' }} rounded-pill">
+                                            {{ isOutOfStock ? 'Stokta Yok' : 'Stok: ' ~ stockValue }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
 
-    {{ include('product/_delete_form.html.twig') }}
+                            <div class="d-flex align-items-baseline gap-3">
+                                <p class="display-6 fw-semibold mb-0">{{ product.price|number_format(2, ',', '.') }} ₺</p>
+                                {% if stockValue is not null and stockValue > 0 %}
+                                    <small class="text-muted">Adet fiyatı</small>
+                                {% endif %}
+                            </div>
+
+                            {% if product.description %}
+                                <p class="text-secondary mb-0">{{ product.description|nl2br }}</p>
+                            {% endif %}
+
+                            {% set quantityInputId = 'quantity-' ~ product.id %}
+                            <form action="{{ path('app_cart_add', {id: product.id}) }}" method="post" class="mt-2" id="add-to-cart-form-{{ product.id }}">
+                                <div class="row g-3 align-items-end">
+                                    <div class="col-sm-4">
+                                        <label for="{{ quantityInputId }}" class="form-label mb-1">Quantity</label>
+                                        <input
+                                            type="number"
+                                            name="quantity"
+                                            id="{{ quantityInputId }}"
+                                            value="1"
+                                            min="1"
+                                            max="{{ maxQuantity }}"
+                                            class="form-control"
+                                            {{ isOutOfStock ? 'disabled' : '' }}
+                                        >
+                                    </div>
+                                    <div class="col-sm">
+                                        <button
+                                            class="btn btn-success btn-lg px-4 add-to-cart w-100"
+                                            type="button"
+                                            data-product-id="{{ product.id }}"
+                                            data-product-name="{{ product.name|e('html_attr') }}"
+                                            data-cart-url="{{ path('app_cart_add', {id: product.id}) }}"
+                                            data-quantity-input="#{{ quantityInputId }}"
+                                            data-fallback-form="add-to-cart-form-{{ product.id }}"
+                                            {{ isOutOfStock ? 'disabled' : '' }}
+                                        >
+                                            🛒 Sepete Ekle
+                                        </button>
+                                        <noscript>
+                                            <button class="btn btn-success btn-lg px-4 mt-2 w-100" type="submit" {{ isOutOfStock ? 'disabled' : '' }}>
+                                                🛒 Sepete Ekle
+                                            </button>
+                                        </noscript>
+                                    </div>
+                                </div>
+                                {% if isOutOfStock %}
+                                    <p class="text-danger small mt-2 mb-0">Bu ürün şu anda stokta yok.</p>
+                                {% endif %}
+                            </form>
+
+                            <div class="card bg-light border-0 mt-3">
+                                <div class="card-body p-3">
+                                    <h2 class="h6 text-uppercase text-muted mb-3">Ürün Bilgileri</h2>
+                                    <dl class="row mb-0">
+                                        <dt class="col-sm-5 text-muted">Ürün No</dt>
+                                        <dd class="col-sm-7 mb-2">#{{ product.id }}</dd>
+
+                                        <dt class="col-sm-5 text-muted">Kategori</dt>
+                                        <dd class="col-sm-7 mb-2">{{ product.category ? product.category.name : 'Uncategorized' }}</dd>
+
+                                        <dt class="col-sm-5 text-muted">Stok Durumu</dt>
+                                        <dd class="col-sm-7 mb-2">
+                                            {% if stockValue is null %}
+                                                Bilgi yok
+                                            {% elseif isOutOfStock %}
+                                                Stokta Yok
+                                            {% else %}
+                                                {{ stockValue }} adet
+                                            {% endif %}
+                                        </dd>
+
+                                        <dt class="col-sm-5 text-muted">Oluşturulma</dt>
+                                        <dd class="col-sm-7 mb-2">{{ product.createdAt ? product.createdAt|date('d M Y H:i') : '—' }}</dd>
+
+                                        <dt class="col-sm-5 text-muted">Güncellenme</dt>
+                                        <dd class="col-sm-7 mb-0">{{ product.updatedAt ? product.updatedAt|date('d M Y H:i') : '—' }}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <a href="{{ path('app_product_index') }}" class="btn btn-outline-secondary">
+                                        ← Ürün listesine dön
+                                    </a>
+                                    <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="btn btn-outline-primary">
+                                        Ürünü düzenle
+                                    </a>
+                                {% else %}
+                                    <a href="{{ path('app_home') }}" class="btn btn-outline-secondary">
+                                        ← Alışverişe devam et
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body p-4">
+                    <h2 class="h6 text-uppercase text-muted mb-3">Yönetici İşlemleri</h2>
+                    {{ include('product/_delete_form.html.twig') }}
+                </div>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

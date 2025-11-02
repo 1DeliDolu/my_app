@@ -16,10 +16,16 @@ final class HomeController extends AbstractController
         $products = $productRepository->findAll();
         $categories = $categoryRepository->findAll();
 
+        $categoryCounts = [];
+        foreach ($categories as $category) {
+            $categoryCounts[$category->getSlug()] = $productRepository->count(['category' => $category]);
+        }
+
         return $this->render('home/index.html.twig', [
             'controller_name' => 'HomeController',
             'products' => $products,
             'categories' => $categories,
+            'categoryCounts' => $categoryCounts,
         ]);
     }
 

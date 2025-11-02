@@ -10,19 +10,38 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/product')]
 final class ProductController extends AbstractController
 {
     #[Route(name: 'app_product_index', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function index(ProductRepository $productRepository): Response
     {
+        $products = $productRepository->createQueryBuilder('p')
+            ->leftJoin('p.category', 'c')
+            ->addSelect('c')
+            ->orderBy('c.name', 'ASC')
+            ->addOrderBy('p.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        $grouped = [];
+        foreach ($products as $product) {
+            $categoryName = $product->getCategory()?->getName() ?? 'Uncategorized';
+            $grouped[$categoryName][] = $product;
+        }
+
+        ksort($grouped, SORT_NATURAL | SORT_FLAG_CASE);
+
         return $this->render('product/index.html.twig', [
-            'products' => $productRepository->findAll(),
+            'groupedProducts' => $grouped,
         ]);
     }
 
     #[Route('/new', name: 'app_product_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $product = new Product();
@@ -51,6 +70,7 @@ final class ProductController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_product_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function edit(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ProductType::class, $product);
@@ -69,6 +89,7 @@ final class ProductController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_product_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->getPayload()->getString('_token'))) {

@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Repository\ProductRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class CartService
 {
@@ -16,7 +17,15 @@ class CartService
 
     public function add(int $productId, int $quantity = 1): void
     {
-        $session = $this->requestStack->getSession();
+        if ($quantity <= 0) {
+            return;
+        }
+
+        $session = $this->getSession();
+        if (null === $session) {
+            return;
+        }
+
         $cart = $session->get(self::CART_KEY, []);
         $cart[$productId] = ($cart[$productId] ?? 0) + $quantity;
         $session->set(self::CART_KEY, $cart);
@@ -24,23 +33,66 @@ class CartService
 
     public function getDetailedItems(): array
     {
-        $session = $this->requestStack->getSession();
+        $session = $this->getSession();
+        if (null === $session) {
+            return [];
+        }
+
         $cart = $session->get(self::CART_KEY, []);
         $items = [];
 
         foreach ($cart as $productId => $qty) {
             $product = $this->productRepository->find($productId);
-            if ($product) {
-                $items[] = [
-                    'product' => $product,
-                    'quantity' => $qty,
-                    'unitPrice' => $product->getPrice(),
-                    'subtotal' => $product->getPrice() * $qty,
-                ];
+            if (!$product) {
+                continue;
             }
+
+            $unitPrice = (float) $product->getPrice();
+
+            $items[] = [
+                'product' => $product,
+                'quantity' => $qty,
+                'unitPrice' => $unitPrice,
+                'subtotal' => $unitPrice * $qty,
+            ];
         }
 
         return $items;
+    }
+
+    public function set(int $productId, int $quantity): void
+    {
+        $session = $this->getSession();
+        if (null === $session) {
+            return;
+        }
+
+        $cart = $session->get(self::CART_KEY, []);
+
+        if ($quantity <= 0) {
+            unset($cart[$productId]);
+        } else {
+            $cart[$productId] = $quantity;
+        }
+
+        $session->set(self::CART_KEY, $cart);
+    }
+
+    public function remove(int $productId): void
+    {
+        $session = $this->getSession();
+        if (null === $session) {
+            return;
+        }
+
+        $cart = $session->get(self::CART_KEY, []);
+        unset($cart[$productId]);
+        $session->set(self::CART_KEY, $cart);
+    }
+
+    public function getItemCount(): int
+    {
+        return $this->count();
     }
 
     public function getTotal(): float
@@ -50,6 +102,26 @@ class CartService
 
     public function clear(): void
     {
-        $this->requestStack->getSession()->remove(self::CART_KEY);
+        $session = $this->getSession();
+        if (null === $session) {
+            return;
+        }
+
+        $session->remove(self::CART_KEY);
+    }
+
+    public function count(): int
+    {
+        $session = $this->getSession();
+        if (null === $session) {
+            return 0;
+        }
+
+        return (int) array_sum($session->get(self::CART_KEY, []));
+    }
+
+    private function getSession(): ?SessionInterface
+    {
+        return $this->requestStack->getSession();
     }
 }

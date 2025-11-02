@@ -2,62 +2,75 @@
 
 {% block title %}My Addresses{% endblock %}
 
-{% block breadcrumb %}
-    {% include 'partials/_breadcrumb.html.twig' with {
-        items: [
-            { label: 'Home', url: path('app_home') },
-            { label: 'My Addresses' }
-        ]
-    } %}
-{% endblock %}
-
 {% block body %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="mb-0">My Addresses</h2>
-    <a href="{{ path('app_address_new') }}" class="btn btn-success">+ Add New Address</a>
-</div>
+<div class="container px-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb bg-transparent p-0 mb-0">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">My Addresses</li>
+        </ol>
+    </nav>
 
-{% for message in app.flashes('success') %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-3 mb-4">
+        <div>
+            <h2 class="fw-semibold mb-1 text-dark">My Addresses</h2>
+            <p class="text-muted mb-0">Manage your saved delivery and billing information.</p>
+        </div>
+        <a href="{{ path('app_address_new') }}" class="btn btn-success btn-lg shadow-sm">+ Add New Address</a>
     </div>
-{% endfor %}
 
-<div class="table-responsive">
-    <table class="table table-bordered align-middle">
-        <thead class="table-light">
-            <tr>
-                <th scope="col">Type</th>
-                <th scope="col">Street</th>
-                <th scope="col">City</th>
-                <th scope="col">Country</th>
-                <th scope="col">Phone</th>
-                <th scope="col" class="text-end">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for address in addresses %}
-                <tr>
-                    <td>{{ address.type|capitalize }}</td>
-                    <td>{{ address.street }}</td>
-                    <td>{{ address.city }}</td>
-                    <td>{{ address.country }}</td>
-                    <td>{{ address.phone ?: '-' }}</td>
-                    <td class="text-end">
-                        <a href="{{ path('app_address_edit', { id: address.id }) }}" class="btn btn-sm btn-primary">Edit</a>
-                        <form method="post" action="{{ path('app_address_delete', { id: address.id }) }}" class="d-inline-block" onsubmit="return confirm('Delete this address?');">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete_address_' ~ address.id) }}">
-                            <button class="btn btn-sm btn-danger">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="6" class="text-center text-muted">No addresses found</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-secondary text-uppercase small">
+                        <tr>
+                            <th scope="col">Type</th>
+                            <th scope="col">Street</th>
+                            <th scope="col">City</th>
+                            <th scope="col">Country</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col" class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for address in addresses %}
+                            <tr>
+                                <td class="fw-semibold">{{ address.type|capitalize }}</td>
+                                <td>{{ address.street }}</td>
+                                <td>{{ address.city }}</td>
+                                <td>{{ address.country }}</td>
+                                <td>{{ address.phone ?: '-' }}</td>
+                                <td class="text-end">
+                                    <a href="{{ path('app_address_edit', { id: address.id }) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                    <form method="post" action="{{ path('app_address_delete', { id: address.id }) }}" class="d-inline-block ms-1" onsubmit="return confirm('Delete this address?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_address_' ~ address.id) }}">
+                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-5">
+                                    <div class="py-4">
+                                        <h5 class="fw-semibold mb-1">No addresses saved yet</h5>
+                                        <p class="mb-3">Add a shipping or billing address to speed up checkout.</p>
+                                        <a href="{{ path('app_address_new') }}" class="btn btn-primary btn-sm">Add your first address</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
